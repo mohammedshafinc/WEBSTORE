@@ -1,4 +1,6 @@
 import { Component ,OnInit} from '@angular/core';
+ 
+const  rows_heigth : { [id: number]: number} = { 1 : 400 , 3 : 335 , 4:350};
 
 @Component({
   selector: 'app-home',
@@ -8,6 +10,7 @@ import { Component ,OnInit} from '@angular/core';
 export class HomeComponent implements OnInit {
 
   cols = 3
+  rowHeight = rows_heigth[this.cols]
 
   category: string | undefined;
 
@@ -18,6 +21,7 @@ export class HomeComponent implements OnInit {
   oncolumnscountchange(colsnum:number):void{
 
     this.cols = colsnum
+    this.rowHeight = rows_heigth[this.cols];
 
   }
 
