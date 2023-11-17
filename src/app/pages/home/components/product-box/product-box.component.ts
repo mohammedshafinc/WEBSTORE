@@ -12,7 +12,7 @@ export class ProductBoxComponent  implements OnInit{
   product : product | undefined = {
     id :1,
     title:'snickers',
-    price:150,
+    price:1500,
     category:'shoes',
     description:'Description',
     image:'https://via.placeholder.com/150',
