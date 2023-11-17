@@ -1,6 +1,8 @@
-import { Component ,OnInit} from '@angular/core';
+import { Component ,OnDestroy,OnInit} from '@angular/core';
+import { Subscription } from 'rxjs';
 import { product } from 'src/app/models/product.model';
 import { CartService } from 'src/app/services/cart.service';
+import { StoreService } from 'src/app/services/store.service';
  
 const  rows_heigth : { [id: number]: number} = { 1 : 400 , 3 : 335 , 4:350};
 
@@ -9,19 +11,34 @@ const  rows_heigth : { [id: number]: number} = { 1 : 400 , 3 : 335 , 4:350};
   templateUrl:'./home.component.html' ,
   
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   cols = 3
   rowHeight = rows_heigth[this.cols]
 
 
 
-  constructor ( private cartservice:CartService){}
+  constructor ( private cartservice:CartService , private storeService : StoreService){}
 
   category: string | undefined;
+  products:Array<product> | undefined;
+  sort = 'desc';
+  count = '12';
+  productsSubscription: Subscription | undefined
+
 
   ngOnInit(): void {
+
+    this.getProducts();
       
+  }
+
+
+  getProducts() : void{
+   this.productsSubscription = this.storeService.getAllProducts(this.count,this.sort , this.category).subscribe((_products) => {
+      this.products = _products
+    });
+
   }
 
   oncolumnscountchange(colsnum:number):void{
@@ -33,7 +50,8 @@ export class HomeComponent implements OnInit {
 
   onshowcategory ( newcategory :string) :void{
 
-    this.category = newcategory
+    this.category = newcategory 
+    this.getProducts();
 
   }
 
@@ -47,8 +65,31 @@ export class HomeComponent implements OnInit {
       id:product.id
     })
 
-    
+  }
 
+  onitemsCountChange( newCount : number) :void{
+
+      this.count = newCount.toString();
+
+      this.getProducts();
+
+  }
+
+  onsortChange(newsort :string) : void{
+
+    this.sort = newsort;
+    this.getProducts();
+
+
+  }
+
+
+  ngOnDestroy(): void {
+      if (this.productsSubscription) {
+
+        this.productsSubscription.unsubscribe();
+        
+      }
   }
 
 }
